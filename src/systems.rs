@@ -14,27 +14,31 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
 }
 
 pub fn transition_to_game_state(
-    mut commands: Commands,
+    // mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
+    mut next_app_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::G) {
         if app_state.0 != AppState::Game {
-            commands.insert_resource(NextState(Some(AppState::Game)));
+            next_app_state.set(AppState::Game);
+            // commands.insert_resource(NextState(Some(AppState::Game)));
             println!("Game!");
         }
     }
 }
 
 pub fn transition_to_menu_state(
-    mut commands: Commands,
+    // mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
+    mut app_state_next_state: ResMut<NextState<AppState>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::M) {
         if app_state.0 != AppState::MainMenu {
-            commands.insert_resource(NextState(Some(AppState::MainMenu)));
-            commands.insert_resource(NextState(Some(SimulationState::Paused)));
+            app_state_next_state.set(AppState::MainMenu);
+            // commands.insert_resource(NextState(Some(AppState::MainMenu)));
+            // commands.insert_resource(NextState(Some(SimulationState::Paused)));
             println!("Main menu!");
         }
     }
@@ -49,9 +53,14 @@ pub fn exit_game(
     }
 }
 
-pub fn handle_game_over(mut game_over_event_reader: EventReader<GameOver>, mut commands: Commands) {
+pub fn handle_game_over(
+    mut game_over_event_reader: EventReader<GameOver>,
+    // mut commands: Commands
+    mut app_state_next_state: ResMut<NextState<AppState>>,
+) {
     for event in game_over_event_reader.iter() {
         println!("Your final score is: {}", event.score.to_string());
-        commands.insert_resource(NextState(Some(AppState::GameOver)));
+        app_state_next_state.set(AppState::GameOver);
+        // commands.insert_resource(NextState(Some(AppState::GameOver)));
     }
 }
